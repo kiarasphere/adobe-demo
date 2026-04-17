@@ -1,14 +1,19 @@
-import {Switch} from '@adobe/react-spectrum'
+import {Flex, Switch, Text} from '@adobe/react-spectrum';
 
-function Lighting(props : {switch: any; selected: boolean}) {
+type LightingProps = {
+  selected: boolean;
+  switch: (isSelected: boolean) => void;
+};
 
-    let mode = props.selected ? "Light Mode" : "Dark Mode";
-    return (
-        <Switch onChange={props.switch}>
-            {mode}
-        </Switch>
-    );
-  }
-
+function Lighting(props: LightingProps) {
+  return (
+    <Flex alignItems="center" justifyContent="space-between" marginBottom="size-300" width="100%">
+      <Text>Theme</Text>
+      <Switch isSelected={props.selected} onChange={props.switch}>
+        Light mode
+      </Switch>
+    </Flex>
+  );
+}
 
 export default Lighting;

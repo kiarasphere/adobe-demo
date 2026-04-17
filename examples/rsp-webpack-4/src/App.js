@@ -21,15 +21,15 @@ let nestedItems = [
 ];
 
 function App() {
-  let [selected, setSelection] = useState(false);
+  let [isLightMode, setIsLightMode] = useState(true);
   enableTableNestedRows();
 
   return (
     <Provider theme={defaultTheme}
-              colorScheme={selected ? "light" : "dark"}
+              colorScheme={isLightMode ? "light" : "dark"}
               height="100%">
       <div className="content-padding">
-        <Lighting selected={selected} switch={setSelection} />
+        <Lighting isLightMode={isLightMode} onModeChange={setIsLightMode} />
         <TagGroup aria-label="Static TagGroup items example">
           <Item>News</Item>
           <Item>Travel</Item>
