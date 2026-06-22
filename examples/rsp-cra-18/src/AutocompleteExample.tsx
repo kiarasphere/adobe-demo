@@ -1,5 +1,5 @@
 import {Autocomplete, Input, Label, Menu, MenuItem, SearchField, Text, useFilter} from 'react-aria-components'
-import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {classNames} from './classNames';
 import styles from './autocomplete.css';
 
 interface AutocompleteItem {

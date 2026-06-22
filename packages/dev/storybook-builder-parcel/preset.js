@@ -8,6 +8,10 @@ const { generatePreviewModern } = require("./gen-preview-modern.js");
 
 const generatedEntries = path.join(__dirname, "generated-entries");
 
+// Parcel defaults to 3000/3001; override when another app (e.g. Grafana) uses those ports.
+const PARCEL_SERVE_PORT = Number(process.env.PARCEL_SERVE_PORT) || 3000;
+const PARCEL_HMR_PORT = Number(process.env.PARCEL_HMR_PORT) || 3001;
+
 exports.start = async function ({ options, router }) {
   let parcel = await createParcel(options, true);
 
@@ -17,7 +21,7 @@ exports.start = async function ({ options, router }) {
     }
 
     let proxy = createProxyMiddleware({
-      target: "http://localhost:3000/",
+      target: `http://localhost:${PARCEL_SERVE_PORT}/`,
       selfHandleResponse: true,
       logLevel: "warn",
       onProxyRes(proxyRes, req, res) {
@@ -88,12 +92,12 @@ async function createParcel(options, isDev = false) {
     mode: isDev ? "development" : "production",
     serveOptions: isDev
       ? {
-          port: 3000,
+          port: PARCEL_SERVE_PORT,
         }
       : null,
     hmrOptions: isDev
       ? {
-          port: 3001,
+          port: PARCEL_HMR_PORT,
         }
       : null,
     additionalReporters: [
