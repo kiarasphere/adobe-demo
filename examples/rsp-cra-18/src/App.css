@@ -1,22 +1,36 @@
-body{
+html,
+body,
+#root {
   height: 100%;
-}
-
-.no-bullets{
-  list-style-type: none;
-  padding: 0px;
-}
-
-#root{
-  padding: 0;
   margin: 0;
-  height: 100%;
+  padding: 0;
 }
 
-html {
-  height: 100%;
+body {
+  background-color: var(--spectrum-alias-background-color-default, #f4f4f4);
+  color: var(--spectrum-body-text-color, #222);
 }
 
-.content-padding{
+html[data-color-scheme='dark'] body {
+  background-color: var(--spectrum-alias-background-color-default, #1a1a1a);
+  color: var(--spectrum-body-text-color, #f4f4f4);
+}
+
+.no-bullets {
+  list-style-type: none;
+  padding: 0;
+}
+
+.content-padding {
   padding: 50px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.content-padding h1,
+.content-padding h2,
+.content-padding h3,
+.content-padding p,
+.content-padding label {
+  color: inherit;
 }
