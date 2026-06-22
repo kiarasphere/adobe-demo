@@ -94,9 +94,7 @@ function ProviderFieldSetter({api}) {
   let prefersDark = typeof window !== 'undefined' && window.matchMedia
     ? window.matchMedia('(prefers-color-scheme: dark)').matches
     : false;
-  let isDark = values.theme
-    ? (values.theme === 'dark' || values.theme === 'darkest')
-    : prefersDark;
+  let isDark = values.theme.includes('dark') || prefersDark;
   let onToggleColorScheme = () => {
     let newValue = isDark ? 'light' : 'dark';
     // Flip the Storybook chrome (manager UI) to match.
