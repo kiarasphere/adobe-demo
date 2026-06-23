@@ -97,6 +97,10 @@ function ProviderFieldSetter({api}) {
   let isDark = values.theme.includes('dark') || prefersDark;
   let onToggleColorScheme = () => {
     let newValue = isDark ? 'light' : 'dark';
+    // Persist the user's preference so it is restored on their next visit.
+    let prefs = JSON.parse(window.localStorage.getItem('rsp-prefs'));
+    prefs.colorScheme = newValue;
+    window.localStorage.setItem('rsp-prefs', JSON.stringify(prefs));
     // Flip the Storybook chrome (manager UI) to match.
     api.setOptions({theme: getManagerTheme(newValue === 'dark')});
     channel.emit(FORCE_RE_RENDER);
