@@ -1,6 +1,21 @@
 import {addons, types} from 'storybook/manager-api';
+import {themes as sbThemes} from 'storybook/theming';
+import {FORCE_RE_RENDER} from 'storybook/internal/core-events';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
+// temporary until we have a better place to grab it from
+import * as packageJSON from '../../../packages/@adobe/react-spectrum/package.json';
+
+// Builds the Storybook manager (chrome) theme so the whole UI flips along with
+// the story preview, while preserving the React Spectrum branding.
+function getManagerTheme(isDark) {
+  let base = isDark ? sbThemes.dark : sbThemes.normal;
+  return {
+    ...base,
+    brandTitle: `React Spectrum<br />v${packageJSON.version}`,
+    brandUrl: 'https://react-spectrum.corp.adobe.com'
+  };
+}
 
 
 let THEMES = [
@@ -73,6 +88,29 @@ function ProviderFieldSetter({api}) {
       return next;
     });
   };
+  // Resolve whether we're currently showing a dark theme. When the theme is
+  // unset ("Auto"), fall back to the OS preference so the first toggle always
+  // produces a visible change.
+  let prefersDark = typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : false;
+  let isDark = values.theme.includes('dark') || prefersDark;
+  let onToggleColorScheme = () => {
+    let newValue = isDark ? 'light' : 'dark';
+    // Persist the user's preference so it is restored on their next visit.
+    let prefs = JSON.parse(window.localStorage.getItem('rsp-prefs'));
+    prefs.colorScheme = newValue;
+    window.localStorage.setItem('rsp-prefs', JSON.stringify(prefs));
+    // Flip the Storybook chrome (manager UI) to match.
+    api.setOptions({theme: getManagerTheme(newValue === 'dark')});
+    channel.emit(FORCE_RE_RENDER);
+    setValues((old) => {
+      let next = {...old, theme: newValue};
+      // Flip the story preview (React Spectrum Provider) via the existing channel.
+      channel.emit('provider/updated', next);
+      return next;
+    });
+  };
   useEffect(() => {
     let storySwapped = () => {
       channel.emit('provider/updated', values);
@@ -94,6 +132,30 @@ function ProviderFieldSetter({api}) {
 
   return (
     <div style={{display: 'flex', alignItems: 'center', fontSize: '12px'}}>
+      <button
+        type="button"
+        id="color-scheme-toggle"
+        onClick={onToggleColorScheme}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-pressed={isDark}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          marginRight: '12px',
+          padding: '4px 10px',
+          fontSize: '12px',
+          lineHeight: 1,
+          cursor: 'pointer',
+          border: '1px solid rgba(127, 127, 127, 0.4)',
+          borderRadius: '4px',
+          background: 'transparent',
+          color: 'inherit'
+        }}>
+        <span aria-hidden="true" style={{fontSize: '14px'}}>{isDark ? '🌙' : '☀️'}</span>
+        <span>{isDark ? 'Dark' : 'Light'}</span>
+      </button>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="locale">Locale: </label>
         <select id="locale" name="locale" onChange={onLocaleChange} value={values.locale}>
