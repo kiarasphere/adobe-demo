@@ -58,7 +58,7 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
 
       // Trigger onChange. Note that if setState is called multiple times in a single event,
       // onChange will be called for each one instead of only once.
-      onChange?.(newValue, ...args);
+      onChange(newValue, ...args);
     }
   }, [onChange]);
 
