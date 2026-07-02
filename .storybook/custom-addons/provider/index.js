@@ -16,11 +16,14 @@ function ProviderUpdater(props) {
   let [scaleValue, setScale] = useState(scaleParam);
   let expressParam = params.get("providerSwitcher-express") || undefined;
   let [expressValue, setExpress] = useState(expressParam === 'true');
+  let colorSchemeParam = params.get("providerSwitcher-colorScheme") || undefined;
+  let [colorSchemeOverride, setColorSchemeOverride] = useState(colorSchemeParam);
   let [storyReady, setStoryReady] = useState(window.parent === window || window.parent !== window.top); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
   let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
-  let colorScheme = themeValue && themeValue.replace(/est$/, '');
+  // The dark mode toggle (colorSchemeOverride) takes precedence over the theme dropdown.
+  let colorScheme = colorSchemeOverride || (themeValue && themeValue.replace(/est$/, ''));
   useEffect(() => {
     let channel = addons.getChannel();
     let providerUpdate = (event) => {
@@ -30,11 +33,17 @@ function ProviderUpdater(props) {
       setExpress(event.express);
       setStoryReady(true);
     };
+    let colorSchemeUpdate = (value) => {
+      setColorSchemeOverride(value || undefined);
+      setStoryReady(true);
+    };
 
     channel.on('provider/updated', providerUpdate);
+    channel.on('provider/colorScheme', colorSchemeUpdate);
     channel.emit('rsp/ready-for-update');
     return () => {
       channel.removeListener('provider/updated', providerUpdate);
+      channel.removeListener('provider/colorScheme', colorSchemeUpdate);
     };
   }, []);
 

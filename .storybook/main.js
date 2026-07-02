@@ -13,6 +13,7 @@ module.exports = {
     'storybook/actions',
     '@storybook/addon-a11y',
     '@vueless/storybook-dark-mode',
+    './custom-addons/darkmode/register.js',
     './custom-addons/provider/register.js',
     './custom-addons/descriptions/register.js',
     './custom-addons/theme/register.js',
