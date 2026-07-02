@@ -17,3 +17,6 @@ This is the Adobe **React Spectrum** monorepo (React Aria / React Stately / Reac
 - Focused unit tests: `yarn jest <path-to-test>` (test files match `packages/**/*.test.[tj]s?(x)`). The full `yarn jest` suite is large.
 - `yarn check-types` uses the fast `tsgo` type checker. `yarn lint` is heavier (runs `check-types` + `eslint packages` + package lint + yarn constraints).
 - `yarn install` runs a `postinstall` that builds SVG icons; the generated icon files are gitignored, so a clean `git status` after install is expected.
+
+### Skills
+- **`implement-feature`** (`.cursor/skills/implement-feature/SKILL.md`): end-to-end feature implementation from a Jira ticket, issue URL, or plain-text description — gather context, plan, build following repo conventions, verify against acceptance criteria, and hand off. Use it whenever asked to build/implement/ship a feature or when pointed at a ticket (e.g. the `KT-*` component tickets).
