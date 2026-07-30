@@ -1,6 +1,7 @@
 import './App.css';
 import {Provider, defaultTheme, Item, TagGroup, Cell, Column, InlineAlert, Row, TableBody, TableHeader, TableView, Content, Heading} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
+import {useDocumentColorScheme} from './useDocumentColorScheme';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from 'react-stately/private/flags/flags';
@@ -22,12 +23,14 @@ let nestedItems = [
 
 function App() {
   let [isLightMode, setIsLightMode] = useState(true);
+  useDocumentColorScheme(isLightMode);
   enableTableNestedRows();
 
   return (
     <Provider theme={defaultTheme}
               colorScheme={isLightMode ? "light" : "dark"}
-              height="100%">
+              height="100%"
+              UNSAFE_style={{minHeight: '100vh'}}>
       <div className="content-padding">
         <Lighting isLightMode={isLightMode} onModeChange={setIsLightMode} />
         <TagGroup aria-label="Static TagGroup items example">
