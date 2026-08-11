@@ -2,6 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Datadog (US5)
+
+Browser RUM + Logs are bootstrapped in `src/observability.ts` under **`service:adobe-demo`**.
+
+Copy `.env.example` → `.env`, set `REACT_APP_DD_APPLICATION_ID` and `REACT_APP_DD_CLIENT_TOKEN`, then **restart** `yarn start` (CRA only inlines env at compile time). See [`../datadog/README.md`](../datadog/README.md) for verification steps. Without credentials the app still runs (instrumentation no-ops).
+
+After load you should see a browser log “adobe-demo Datadog browser instrumentation initialized” (not the “Datadog RUM skipped” message). Confirm with `window.DD_RUM.getInitConfiguration()` and `window.__adobeDemoReportError('adobe-demo verification error')`.
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -8,6 +8,8 @@
     "@adobe/react-spectrum": "latest",
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@babel/preset-react": "^7.24.1",
+    "@datadog/browser-logs": "^7.8.0",
+    "@datadog/browser-rum": "^7.8.0",
     "@react-aria/dnd": "latest",
     "@react-spectrum/provider": "latest",
     "@spectrum-icons/illustrations": "latest",
@@ -30,6 +32,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:observability": "node --test ../datadog/observability.test.js",
     "eject": "react-scripts eject",
     "install-17": "yarn add -W react@^17 react-dom@^17"
   },

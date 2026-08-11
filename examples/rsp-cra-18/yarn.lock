@@ -1846,6 +1846,63 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@datadog/browser-core@npm:7.8.0":
+  version: 7.8.0
+  resolution: "@datadog/browser-core@npm:7.8.0"
+  dependencies:
+    "@datadog/js-core": "npm:0.0.9"
+  checksum: 10c0/98aa2b4342bfb5b41289397116e46da38191a812ee3400dc8d39f748bd232f86a11101c66a65bbcda196c74b66634aca362f7407d5400b330e73eb42c30a1822
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-logs@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "@datadog/browser-logs@npm:7.8.0"
+  dependencies:
+    "@datadog/browser-core": "npm:7.8.0"
+    "@datadog/js-core": "npm:0.0.9"
+  peerDependencies:
+    "@datadog/browser-rum": 7.8.0
+  peerDependenciesMeta:
+    "@datadog/browser-rum":
+      optional: true
+  checksum: 10c0/bbfb00c14106d4c860130cdabaabe2bdba18f69283331c57d1b1d1010a2bc39f0662c4b0aeb09d2bd1c005a7804d5a8c9638473aa4053dd5fb9b505ab1cb343c
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-rum-core@npm:7.8.0":
+  version: 7.8.0
+  resolution: "@datadog/browser-rum-core@npm:7.8.0"
+  dependencies:
+    "@datadog/browser-core": "npm:7.8.0"
+    "@datadog/js-core": "npm:0.0.9"
+  checksum: 10c0/bd746a31b00a04dcc87c69dd816c9e9f8050d27de2f84124d49b70f918ef95c0bd94e5ecc8d9f3797f3a921b0219058a4e710e83423fe34659ab441b2b16271c
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-rum@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "@datadog/browser-rum@npm:7.8.0"
+  dependencies:
+    "@datadog/browser-core": "npm:7.8.0"
+    "@datadog/browser-rum-core": "npm:7.8.0"
+    "@datadog/js-core": "npm:0.0.9"
+  peerDependencies:
+    "@datadog/browser-logs": 7.8.0
+  peerDependenciesMeta:
+    "@datadog/browser-logs":
+      optional: true
+  checksum: 10c0/230cabd1c87343f29124949c0e556cc99a61bbee017bcd2b5ee0ef2792dc2db6be91317fc6b366c181d7cc918bcf594c8c9d7112ef292aada4bbd63bd3075e04
+  languageName: node
+  linkType: hard
+
+"@datadog/js-core@npm:0.0.9":
+  version: 0.0.9
+  resolution: "@datadog/js-core@npm:0.0.9"
+  checksum: 10c0/6739d4ab18bfd2fc11c8640a73f05d9c76ab8c1178de54165d87480a888ea95f3c571a609f847243769741010a487886d3d3da8b83b7713fe9f0f548d8a742fd
+  languageName: node
+  linkType: hard
+
 "@eslint-community/eslint-utils@npm:^4.2.0":
   version: 4.9.0
   resolution: "@eslint-community/eslint-utils@npm:4.9.0"
@@ -15142,6 +15199,8 @@ __metadata:
     "@adobe/react-spectrum": "npm:latest"
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.16.7"
     "@babel/preset-react": "npm:^7.24.1"
+    "@datadog/browser-logs": "npm:^7.8.0"
+    "@datadog/browser-rum": "npm:^7.8.0"
     "@react-aria/dnd": "npm:latest"
     "@react-spectrum/provider": "npm:latest"
     "@spectrum-icons/illustrations": "npm:latest"
