@@ -3,8 +3,9 @@
   min-width: 150px;
   width: fit-content;
   margin: 4px 0 0 0;
-  border: 1px solid gray;
-  background: lightgray;
+  border: 1px solid var(--spectrum-global-color-gray-400, gray);
+  background: var(--spectrum-alias-background-color-default, lightgray);
+  color: var(--spectrum-body-text-color, inherit);
   padding: 0;
   list-style: none;
   overflow-y: auto;
@@ -15,7 +16,7 @@
   padding: 2px 5px;
   outline: none;
   cursor: default;
-  color: black;
+  color: var(--spectrum-body-text-color, inherit);
   background: transparent;
 }
 
@@ -24,21 +25,21 @@
 }
 
 .item.focused {
-  background: gray;
-  color: white;
+  background: var(--spectrum-highlight-background-color, gray);
+  color: var(--spectrum-highlight-text-color, white);
 }
 
 .item.open:not(.focused) {
-  background: lightslategray;
-  color: white;
+  background: var(--spectrum-global-color-gray-300, lightslategray);
+  color: var(--spectrum-body-text-color, white);
 }
 
 .item.item.hovered {
-  background: lightsalmon;
-  color: white;
+  background: var(--spectrum-global-color-gray-200, lightsalmon);
+  color: var(--spectrum-body-text-color, white);
 }
 
 .item.selected {
-  background: purple;
-  color: white;
+  background: var(--spectrum-global-color-blue-600, purple);
+  color: var(--spectrum-global-color-static-white, white);
 }
