@@ -8,6 +8,12 @@
  * are provided via env (see .env.example). Pure static SPAs do not emit APM
  * `trace.http.request.*`; this module emits RUM views/resources/actions/errors and
  * browser logs tagged with the same service.
+ *
+ * IMPORTANT (CRA / webpack): read `process.env.REACT_APP_DD_*` / `process.env.DD_*` via
+ * static member access so DefinePlugin can inline them. Do not gate on
+ * `typeof process !== 'undefined'` or read from a dynamic `process.env[key]` map —
+ * in the browser bundle `process` is often undefined as an object even though
+ * individual `process.env.X` references were replaced at build time.
  */
 
 export const SERVICE_DEFAULT = 'adobe-demo';
@@ -19,14 +25,13 @@ let _initialized = false;
 let _logs = null;
 let _rum = null;
 
-function envSource(env) {
-  if (env) {
-    return env;
+function nonEmpty(...values) {
+  for (const value of values) {
+    if (value != null && String(value).trim() !== '') {
+      return String(value).trim();
+    }
   }
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env;
-  }
-  return {};
+  return undefined;
 }
 
 function firstNonEmpty(source, keys) {
@@ -48,28 +53,52 @@ function flagEnabled(raw, defaultValue = true) {
 
 /**
  * Read Datadog browser config from CRA (`REACT_APP_*`) or plain `DD_*` env vars.
+ * Pass `env` only in tests; production paths must use static process.env.* reads.
  */
 export function readConfig(env) {
-  const source = envSource(env);
+  if (env) {
+    return {
+      applicationId: firstNonEmpty(env, [
+        'REACT_APP_DD_APPLICATION_ID',
+        'DD_APPLICATION_ID',
+        'DD_RUM_APPLICATION_ID'
+      ]),
+      clientToken: firstNonEmpty(env, [
+        'REACT_APP_DD_CLIENT_TOKEN',
+        'DD_CLIENT_TOKEN',
+        'DD_RUM_CLIENT_TOKEN'
+      ]),
+      site: firstNonEmpty(env, ['REACT_APP_DD_SITE', 'DD_SITE']) || SITE_DEFAULT,
+      service: firstNonEmpty(env, ['REACT_APP_DD_SERVICE', 'DD_SERVICE']) || SERVICE_DEFAULT,
+      env: firstNonEmpty(env, ['REACT_APP_DD_ENV', 'DD_ENV']) || ENV_DEFAULT,
+      version: firstNonEmpty(env, ['REACT_APP_DD_VERSION', 'DD_VERSION']) || VERSION_DEFAULT,
+      sessionSampleRate: Number(
+        firstNonEmpty(env, ['REACT_APP_DD_SESSION_SAMPLE_RATE', 'DD_SESSION_SAMPLE_RATE']) || 100
+      ),
+      enabled: flagEnabled(firstNonEmpty(env, ['REACT_APP_DD_RUM_ENABLED', 'DD_RUM_ENABLED']), true)
+    };
+  }
+
+  // Static member access — required for CRA / webpack DefinePlugin inlining.
   return {
-    applicationId: firstNonEmpty(source, [
-      'REACT_APP_DD_APPLICATION_ID',
-      'DD_APPLICATION_ID',
-      'DD_RUM_APPLICATION_ID'
-    ]),
-    clientToken: firstNonEmpty(source, [
-      'REACT_APP_DD_CLIENT_TOKEN',
-      'DD_CLIENT_TOKEN',
-      'DD_RUM_CLIENT_TOKEN'
-    ]),
-    site: firstNonEmpty(source, ['REACT_APP_DD_SITE', 'DD_SITE']) || SITE_DEFAULT,
-    service: firstNonEmpty(source, ['REACT_APP_DD_SERVICE', 'DD_SERVICE']) || SERVICE_DEFAULT,
-    env: firstNonEmpty(source, ['REACT_APP_DD_ENV', 'DD_ENV']) || ENV_DEFAULT,
-    version: firstNonEmpty(source, ['REACT_APP_DD_VERSION', 'DD_VERSION']) || VERSION_DEFAULT,
-    sessionSampleRate: Number(
-      firstNonEmpty(source, ['REACT_APP_DD_SESSION_SAMPLE_RATE', 'DD_SESSION_SAMPLE_RATE']) || 100
+    applicationId: nonEmpty(
+      process.env.REACT_APP_DD_APPLICATION_ID,
+      process.env.DD_APPLICATION_ID,
+      process.env.DD_RUM_APPLICATION_ID
     ),
-    enabled: flagEnabled(firstNonEmpty(source, ['REACT_APP_DD_RUM_ENABLED', 'DD_RUM_ENABLED']), true)
+    clientToken: nonEmpty(
+      process.env.REACT_APP_DD_CLIENT_TOKEN,
+      process.env.DD_CLIENT_TOKEN,
+      process.env.DD_RUM_CLIENT_TOKEN
+    ),
+    site: nonEmpty(process.env.REACT_APP_DD_SITE, process.env.DD_SITE) || SITE_DEFAULT,
+    service: nonEmpty(process.env.REACT_APP_DD_SERVICE, process.env.DD_SERVICE) || SERVICE_DEFAULT,
+    env: nonEmpty(process.env.REACT_APP_DD_ENV, process.env.DD_ENV) || ENV_DEFAULT,
+    version: nonEmpty(process.env.REACT_APP_DD_VERSION, process.env.DD_VERSION) || VERSION_DEFAULT,
+    sessionSampleRate: Number(
+      nonEmpty(process.env.REACT_APP_DD_SESSION_SAMPLE_RATE, process.env.DD_SESSION_SAMPLE_RATE) || 100
+    ),
+    enabled: flagEnabled(nonEmpty(process.env.REACT_APP_DD_RUM_ENABLED, process.env.DD_RUM_ENABLED), true)
   };
 }
 

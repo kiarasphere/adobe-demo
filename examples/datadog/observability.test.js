@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {dirname, join} from 'node:path';
 import {beforeEach, describe, it} from 'node:test';
+import {fileURLToPath} from 'node:url';
 import {
   SERVICE_DEFAULT,
   SITE_DEFAULT,
@@ -10,6 +13,13 @@ import {
   serviceName,
   _resetForTests
 } from './observability.js';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const observabilitySources = [
+  join(here, 'observability.js'),
+  join(here, '../rsp-cra-18/src/observability.ts'),
+  join(here, '../rsp-webpack-4/src/observability.js')
+];
 
 function mockSdk() {
   const calls = {rumInit: [], logsInit: [], errors: [], infos: []};
@@ -127,5 +137,64 @@ describe('adobe-demo Datadog observability', () => {
     assert.equal(calls.errors.length, 1);
     assert.equal(calls.errors[0].msg, 'boom');
     assert.equal(calls.errors[0].ctx.service, 'adobe-demo');
+  });
+
+  it('reads credentials from process.env via static member access (no override map)', () => {
+    const prevApp = process.env.REACT_APP_DD_APPLICATION_ID;
+    const prevToken = process.env.REACT_APP_DD_CLIENT_TOKEN;
+    const prevService = process.env.REACT_APP_DD_SERVICE;
+    try {
+      process.env.REACT_APP_DD_APPLICATION_ID = 'cra-app-id';
+      process.env.REACT_APP_DD_CLIENT_TOKEN = 'cra-client-token';
+      process.env.REACT_APP_DD_SERVICE = 'adobe-demo';
+      const config = readConfig();
+      assert.equal(config.applicationId, 'cra-app-id');
+      assert.equal(config.clientToken, 'cra-client-token');
+      assert.equal(config.service, 'adobe-demo');
+      assert.equal(isConfigured(config), true);
+    } finally {
+      if (prevApp === undefined) {
+        delete process.env.REACT_APP_DD_APPLICATION_ID;
+      } else {
+        process.env.REACT_APP_DD_APPLICATION_ID = prevApp;
+      }
+      if (prevToken === undefined) {
+        delete process.env.REACT_APP_DD_CLIENT_TOKEN;
+      } else {
+        process.env.REACT_APP_DD_CLIENT_TOKEN = prevToken;
+      }
+      if (prevService === undefined) {
+        delete process.env.REACT_APP_DD_SERVICE;
+      } else {
+        process.env.REACT_APP_DD_SERVICE = prevService;
+      }
+    }
+  });
+
+  it('sources use static process.env.REACT_APP_DD_* reads (CRA/webpack inlining)', () => {
+    for (const file of observabilitySources) {
+      const source = readFileSync(file, 'utf8');
+      // Ignore block/line comments when scanning for the anti-pattern.
+      const codeOnly = source
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/^\s*\/\/.*$/gm, '');
+      assert.match(
+        codeOnly,
+        /process\.env\.REACT_APP_DD_APPLICATION_ID/,
+        `${file} must statically reference process.env.REACT_APP_DD_APPLICATION_ID`
+      );
+      assert.match(
+        codeOnly,
+        /process\.env\.REACT_APP_DD_CLIENT_TOKEN/,
+        `${file} must statically reference process.env.REACT_APP_DD_CLIENT_TOKEN`
+      );
+      // Regression: gating on typeof process breaks CRA browser bundles where
+      // process is undefined but process.env.X was already inlined by DefinePlugin.
+      assert.equal(
+        /typeof process\s*!==\s*['"]undefined['"]/.test(codeOnly),
+        false,
+        `${file} must not gate env reads on typeof process !== "undefined"`
+      );
+    }
   });
 });

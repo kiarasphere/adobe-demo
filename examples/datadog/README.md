@@ -73,6 +73,8 @@ window.__adobeDemoReportError('adobe-demo verification error')
 
 Without credentials the apps still run; init logs a one-line skip message in development.
 
+**CRA note:** env vars must be read as static `process.env.REACT_APP_DD_*` member access so webpack can inline them. Do not gate on `typeof process !== 'undefined'` — in the browser bundle `process` is often undefined even when those members were replaced at build time.
+
 ## Verify in Datadog US5
 
 1. **RUM** → [US5 RUM Explorer](https://us5.datadoghq.com/rum/explorer) → filter `@session.type:user service:adobe-demo` (or Application = your RUM app)
