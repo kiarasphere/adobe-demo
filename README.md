@@ -48,3 +48,25 @@ React Spectrum includes several libraries, which you can choose depending on you
 One of the goals of the React Spectrum project is to make building design systems and component libraries as easy as possible, while maintaining high quality interactions and accessibility support. We aim to raise the bar for web applications. The best way to achieve that goal is **together**. We would love contributions from the community no matter how big or small. 😍
 
 Read our [contributing guide](https://github.com/adobe/react-spectrum/blob/main/CONTRIBUTING.md) to learn about how to propose bugfixes and improvements, and how the development process works. For detailed information about our architecture, and how all of the pieces fit together, read our [architecture docs](https://react-spectrum.adobe.com/architecture.html).
+
+## Datadog instrumentation (demo apps)
+
+This fork instruments the CRA / webpack demo apps with Datadog **Browser RUM + Logs** under **`service:adobe-demo`** for site **US5** (`us5.datadoghq.com`).
+
+There was no existing `DD_SERVICE` / Datadog service name in-repo; **`adobe-demo`** is the canonical tag for RUM and browser logs.
+
+| Signal | Where | Notes |
+|---|---|---|
+| RUM (views / resources / actions / errors) | `examples/rsp-cra-18`, `examples/rsp-webpack-4` | `@datadog/browser-rum` |
+| Browser error logs (`service:adobe-demo`) | Same | `@datadog/browser-logs` + `forwardErrorsToLogs` |
+| APM `trace.http.request.*` | **Skipped** | Pure static SPA demos — no Node HTTP server worth tracing |
+
+Full env table, local run steps, and US5 verification: [`examples/datadog/README.md`](examples/datadog/README.md). Env templates: [`examples/datadog/.env.example`](examples/datadog/.env.example) (never commit secrets).
+
+Quick verify after starting a demo with RUM credentials:
+
+```js
+window.__adobeDemoReportError('adobe-demo verification error')
+```
+
+Then in US5: RUM Explorer / Logs → `service:adobe-demo`.

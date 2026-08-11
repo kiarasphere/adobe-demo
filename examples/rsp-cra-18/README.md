@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Datadog (US5)
+
+Browser RUM + Logs are bootstrapped in `src/observability.ts` under **`service:adobe-demo`**.
+
+Copy `.env.example` → `.env`, set `REACT_APP_DD_APPLICATION_ID` and `REACT_APP_DD_CLIENT_TOKEN`, then `yarn start`. See [`../datadog/README.md`](../datadog/README.md) for verification steps. Without credentials the app still runs (instrumentation no-ops).
+
 ## Available Scripts
 
 In the project directory, you can run:

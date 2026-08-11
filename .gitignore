@@ -21,3 +21,14 @@ starters/docs/registry
 starters/tailwind/registry
 starters/docs/yarn.lock
 starters/tailwind/yarn.lock
+
+# Datadog / local secrets (keep *.env.example)
+.env
+.env.local
+.env.*.local
+examples/*/.env
+examples/*/.env.local
+!examples/**/.env.example
+
+# CRA build output
+examples/*/build/
